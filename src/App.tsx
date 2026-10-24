@@ -14,6 +14,7 @@ import { BeerCondensationCanvas } from './shaders/BeerCondensationCanvas';
 import { TiltCard3D } from './components/TiltCard3D';
 import { IntroCheers } from './components/IntroCheers';
 import { LiveEffects } from './components/LiveEffects';
+import { GsapEffects } from './components/GsapEffects';
 
 /** Biểu tượng loa đơn giản: có sóng âm khi bật, gạch chéo khi tắt */
 const SoundIcon: React.FC<{ muted: boolean; size?: number }> = ({
@@ -137,11 +138,15 @@ export const App: React.FC = () => {
         .then(() => {
           setIsMuted(false);
           setNeedsUserGestureForAudio(false);
+          // chỉ gỡ listener khi đã phát tiếng thành công
+          window.removeEventListener('pointerdown', unlockAudioOnFirstInteraction);
+          window.removeEventListener('keydown', unlockAudioOnFirstInteraction);
+          window.removeEventListener('touchstart', unlockAudioOnFirstInteraction);
+          window.removeEventListener('scroll', unlockAudioOnFirstInteraction);
         })
-        .catch(() => {});
-      window.removeEventListener('pointerdown', unlockAudioOnFirstInteraction);
-      window.removeEventListener('keydown', unlockAudioOnFirstInteraction);
-      window.removeEventListener('touchstart', unlockAudioOnFirstInteraction);
+        .catch(() => {
+          v.muted = true;
+        });
     };
 
     window.addEventListener('pointerdown', unlockAudioOnFirstInteraction, {
@@ -227,6 +232,7 @@ export const App: React.FC = () => {
 
       {/* Hiệu ứng sống động toàn trang */}
       <LiveEffects enabled={!showIntro} />
+      <GsapEffects enabled={!showIntro} />
 
       {/* ====================================================================
           HEADER: FLOATING GLASS PILL NAVBAR (REA Pattern)
@@ -379,98 +385,66 @@ export const App: React.FC = () => {
           FULLSCREEN STAGGER MENU OVERLAY (REA Pattern)
           ==================================================================== */}
       {isMobileMenuOpen && (
-        <div
-          style={{
-            position: 'fixed',
-            inset: 0,
-            zIndex: 58,
-            background: 'rgba(17, 11, 8, 0.96)',
-            backdropFilter: 'blur(24px)',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            alignItems: 'center',
-            padding: '32px',
-          }}
-        >
-          <div
-            style={{
-              maxWidth: '680px',
-              width: '100%',
-              textAlign: 'center',
-            }}
-          >
-            <div className="sticker-badge" style={{ marginBottom: '20px' }}>
-              HELLO CENTRAL • DĨ AN NIGHTLIFE
-            </div>
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '16px',
-                marginBottom: '32px',
-              }}
-            >
+        <div className="menu-overlay-hc" onClick={() => setIsMobileMenuOpen(false)}>
+          <div className="menu-panel-hc" onClick={(e) => e.stopPropagation()}>
+            <nav className="menu-list-hc">
               {[
-                { label: '01. Trang Chủ & Video Quảng Cáo', href: '#top' },
-                { label: '02. Không Gian & Cung Đường Neon', href: '#khong-gian' },
-                { label: '03. DJ Xập Xình & 3 Ưu Đãi Tặng Món', href: '#uu-dai' },
-                { label: '04. Top 4 Món Đinh Signature', href: '#mon-dinh' },
-                { label: '05. Thực Đơn Chi Tiết (6 Nhóm Món)', href: '#thuc-don' },
-                { label: '06. Đặt Bàn Nhanh Nhận Quà', href: '#dat-ban' },
-              ].map((item) => (
+                { n: '01', label: 'Trang chủ', sub: 'Video giới thiệu quán', href: '#top' },
+                { n: '02', label: 'Không gian', sub: 'Sân vườn & lối đi đèn neon', href: '#khong-gian' },
+                { n: '03', label: 'DJ & Ưu đãi', sub: '3 món tặng khi đặt bàn trước', href: '#uu-dai' },
+                { n: '04', label: 'Món đinh', sub: '4 món signature của quán', href: '#mon-dinh' },
+                { n: '05', label: 'Thực đơn', sub: '6 nhóm món • giá niêm yết', href: '#thuc-don' },
+                { n: '06', label: 'Đặt bàn', sub: 'Giữ chỗ & nhận quà tặng', href: '#dat-ban' },
+              ].map((item, i) => (
                 <a
                   key={item.href}
                   href={item.href}
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="font-display"
-                  style={{
-                    fontSize: 'clamp(1.2rem, 3vw, 1.85rem)',
-                    fontWeight: 800,
-                    color: '#FBF3E4',
-                    textDecoration: 'none',
-                    padding: '12px 20px',
-                    borderRadius: '16px',
-                    border: '1px solid rgba(255, 184, 0, 0.2)',
-                    background: 'rgba(255, 69, 30, 0.08)',
-                  }}
+                  className="menu-item-hc"
+                  style={{ animationDelay: `${0.05 + i * 0.06}s` }}
                 >
-                  {item.label}
+                  <span className="menu-item-num">{item.n}</span>
+                  <span className="menu-item-text">
+                    <span className="menu-item-label font-display">{item.label}</span>
+                    <span className="menu-item-sub">{item.sub}</span>
+                  </span>
+                  <span className="menu-item-arrow" aria-hidden="true">→</span>
                 </a>
               ))}
-            </div>
+            </nav>
 
-            <div
-              style={{
-                display: 'flex',
-                flexWrap: 'wrap',
-                justifyContent: 'center',
-                gap: '14px',
-              }}
-            >
-              <a
-                href={`tel:${BRAND_INFO.hotline1Raw}`}
-                className="btn-hello-primary"
-              >
-                📞 GỌI {BRAND_INFO.hotline1}
-              </a>
-              <a
-                href={BRAND_INFO.zaloUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="btn-hello-secondary"
-              >
-                💬 CHAT ZALO ĐẶT BÀN
-              </a>
-              <a
-                href={BRAND_INFO.mapsUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="btn-hello-secondary"
-              >
-                🗺️ CHỈ ĐƯỜNG 99GS1 ĐÔNG HÒA
-              </a>
-            </div>
+            <aside className="menu-info-hc">
+              <img src="/assets/space-neon-pathway.jpg" alt="" className="menu-info-img" />
+              <div className="menu-info-body">
+                <div className="neon-sign-script" style={{ fontSize: '1.6rem' }}>
+                  Say hello?
+                </div>
+                <a
+                  href={BRAND_INFO.mapsUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="menu-info-row"
+                >
+                  <PinIcon size={16} />
+                  <span>{BRAND_INFO.address}</span>
+                </a>
+                <div className="menu-info-row">
+                  <span>🕔</span>
+                  <span>Mở cửa mỗi ngày 17:00 – 23:59</span>
+                </div>
+                <div className="menu-info-actions">
+                  <a href={`tel:${BRAND_INFO.hotline1Raw}`} className="btn-hello-primary">
+                    📞 {BRAND_INFO.hotline1}
+                  </a>
+                  <a href={BRAND_INFO.zaloUrl} target="_blank" rel="noreferrer" className="btn-hello-secondary">
+                    Zalo
+                  </a>
+                  <a href={BRAND_INFO.mapsUrl} target="_blank" rel="noreferrer" className="btn-hello-secondary">
+                    Chỉ đường
+                  </a>
+                </div>
+              </div>
+            </aside>
           </div>
         </div>
       )}

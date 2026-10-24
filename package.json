@@ -9,6 +9,7 @@
     "preview": "vite preview --port 5179 --host"
   },
   "dependencies": {
+    "gsap": "^3.12.5",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "three": "0.149.0"

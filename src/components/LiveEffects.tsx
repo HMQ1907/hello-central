@@ -9,7 +9,6 @@ import React, { useEffect, useMemo, useRef } from 'react';
  */
 
 const REVEAL_SELECTORS = [
-  'section h2',
   'section h3.font-display',
   'section .sticker-badge',
   '.grid-signature-4 > *',
