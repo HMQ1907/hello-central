@@ -1,4 +1,5 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { clink, fizz, kha, preloadKha, tryUnlockAudio } from './introSounds';
 
 /**
  * Màn chào khi mới vào trang:
@@ -109,6 +110,12 @@ const BeerMug: React.FC<{ side: 'left' | 'right' }> = ({ side }) => {
 
 export const IntroCheers: React.FC<{ onDone: () => void }> = ({ onDone }) => {
   const [leaving, setLeaving] = useState(false);
+  // probe: đang kiểm tra trình duyệt có cho phát tiếng không
+  // gate:  bị chặn → hiện nút "Chạm để DZÔ"
+  // play:  chạy hoạt cảnh cụng ly
+  // Vào thẳng hoạt cảnh, không còn màn "Chạm để DZÔ"
+  const phase = 'play' as 'probe' | 'gate' | 'play';
+  const startRef = useRef(performance.now());
 
   const reduced =
     typeof window !== 'undefined' &&
@@ -143,15 +150,36 @@ export const IntroCheers: React.FC<{ onDone: () => void }> = ({ onDone }) => {
     []
   );
 
+  // Âm thanh: nếu trình duyệt cho phát thì chạy hiệu ứng, không thì intro chạy im lặng
+  useEffect(() => {
+    document.documentElement.style.overflow = 'hidden';
+    preloadKha();
+    let alive = true;
+    if (!reduced) {
+      tryUnlockAudio().then((ok) => {
+        if (!alive || !ok) return;
+        const elapsed = (performance.now() - startRef.current) / 1000;
+        const at = (t: number) => Math.max(0, t - elapsed);
+        if (elapsed < 1.02) clink(at(1.02)); // 2 ly chạm nhau
+        if (elapsed < 1.1) fizz(at(1.1), 1.3); // bọt bia bắn tung
+        if (elapsed < 1.55) kha(at(1.55)); // "khàaa" sảng khoái
+        if (elapsed < 2.2) fizz(at(2.2), 1.4); // bia dâng đầy màn hình
+      });
+    }
+    return () => {
+      alive = false;
+      document.documentElement.style.overflow = '';
+    };
+  }, [reduced]);
+
+  // Hẹn giờ kết thúc intro
   useEffect(() => {
     const total = reduced ? 900 : TOTAL_MS;
     const t1 = window.setTimeout(() => setLeaving(true), total - 650);
     const t2 = window.setTimeout(onDone, total);
-    document.documentElement.style.overflow = 'hidden';
     return () => {
       window.clearTimeout(t1);
       window.clearTimeout(t2);
-      document.documentElement.style.overflow = '';
     };
   }, [onDone, reduced]);
 
@@ -162,10 +190,12 @@ export const IntroCheers: React.FC<{ onDone: () => void }> = ({ onDone }) => {
 
   return (
     <div
-      className={`intro-cheers ${leaving ? 'is-leaving' : ''}`}
-      onClick={skip}
+      className={`intro-cheers ${leaving ? 'is-leaving' : ''} is-${phase}`}
+      onClick={phase === 'play' ? skip : undefined}
       role="presentation"
     >
+      {phase === 'play' && (
+      <>
       <div className="intro-glow" />
 
       {/* Ly bia + cụng ly */}
@@ -241,7 +271,10 @@ export const IntroCheers: React.FC<{ onDone: () => void }> = ({ onDone }) => {
         </div>
       </div>
 
-      <button type="button" className="intro-skip" onClick={skip}>
+      </>
+      )}
+
+      <button type="button" className="intro-skip" onClick={(e) => { e.stopPropagation(); skip(); }}>
         Bỏ qua ›
       </button>
     </div>

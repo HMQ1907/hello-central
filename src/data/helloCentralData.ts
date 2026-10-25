@@ -56,7 +56,7 @@ export const BRAND_INFO = {
   tagline: 'Mồi Bén • Bia Tươi • Nhạc Xập Xình • Chill Hết Nấc',
   heroQuote: 'Say Hello! Don’t Worry, Beer Happy.',
   description:
-    'Không gian ăn uống và giải trí về đêm giữa lòng Đông Hòa, Dĩ An – ngay cạnh GO! Dĩ An. Lối vào lát gạch rực sáng đèn LED, biển neon "hello?" đặc trưng, DJ biểu diễn mỗi tối cùng thực đơn mồi nhậu, lẩu và đồ nướng đậm vị – điểm hẹn lý tưởng cho những buổi tụ họp cùng bạn bè.',
+    'Không gian ăn uống và giải trí về đêm giữa lòng Dĩ An, TP. Hồ Chí Minh – ngay cạnh GO! Dĩ An.',
   openHours: '17:00 – 23:59 (Mở cửa mỗi ngày)',
   address: '99GS1, Phường Đông Hòa, TP. Dĩ An, Bình Dương (Gần GO! Dĩ An)',
   hotline1: '084 663 9279',
@@ -118,7 +118,7 @@ export const SIGNATURE_DISHES: SignatureDish[] = [
     tag: 'CHẮC BỤNG BỀN KÈO',
     price: 'Signature',
     description:
-      'Cua biển tươi chắc thịt quyện sốt đậm đà phủ trên lớp xôi nếp dẻo thơm hành phi, mỡ hành óng ánh. Món đinh vừa lên hình cực nghệ vừa giúp hội bạn trụ vững tới cuối cuộc vui.',
+      'Cua biển tươi chắc thịt quyện sốt đậm đà phủ trên lớp xôi nếp dẻo thơm hành phi, mỡ hành óng ánh. Món chính vừa lên hình cực nghệ vừa giúp hội bạn trụ vững tới cuối cuộc vui.',
     image: '/assets/dish-xoi-cua.jpg',
     accentColor: '#FF1E27',
     stickerText: 'BEST CHOICE!',
@@ -166,7 +166,7 @@ export const PROMO_CARDS: PromoCard[] = [
     description:
       'Trứng lòng đào béo mịn quyện sốt me chua ngọt đậm đà rắc đậu phộng giòn tan và hành phi thơm lừng — món khai vị bắt bia số 1 tại quán.',
     image: '/assets/promo-trung-long-dao.jpg',
-    highlight: 'Món Khai Vị Đinh',
+    highlight: 'Khai Vị Nổi Bật',
   },
 ];
 
@@ -231,7 +231,7 @@ export const MENU_CATEGORIES: MenuCategory[] = [
       { name: 'Khoai tây chiên bơ đường', price: '49.000', unit: 'Phần', veg: true },
       { name: 'Khoai tây chiên cocktail', price: '59.000', unit: 'Phần' },
       { name: 'Đậu hũ chiên giòn', price: '59.000', unit: 'Phần', veg: true },
-      { name: 'Trứng lòng đào tắm me', price: '69.000', unit: 'Phần', bestSeller: true, note: 'Món đinh khai vị' },
+      { name: 'Trứng lòng đào tắm me', price: '69.000', unit: 'Phần', bestSeller: true, note: 'Khai vị nổi bật' },
       { name: 'Cánh gà chiên sả', price: '89.000', unit: 'Phần' },
       { name: 'Cánh gà tắm me cay', price: '89.000', unit: 'Phần', spicy: true },
       { name: 'Đậu hũ chà bông mỡ hành', price: '89.000', unit: 'Phần', bestSeller: true },

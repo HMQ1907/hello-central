@@ -113,7 +113,7 @@ export const GsapEffects: React.FC<{ enabled: boolean }> = ({ enabled }) => {
         }
       );
 
-      /* 6. Thẻ món đinh: xoè ra như bài khi cuộn tới */
+      /* 6. Thẻ món chính: xoè ra như bài khi cuộn tới */
       const dishCards = gsap.utils.toArray<HTMLElement>('#mon-dinh .grid-signature-4 > *');
       if (dishCards.length) {
         gsap.from(dishCards, {

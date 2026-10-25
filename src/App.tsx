@@ -65,6 +65,9 @@ export const App: React.FC = () => {
   // Màn chào cụng ly khi mới vào trang
   const [showIntro, setShowIntro] = useState<boolean>(true);
   const handleIntroDone = React.useCallback(() => setShowIntro(false), []);
+  const showIntroRef = useRef(true);
+  // Trong lúc intro: video nhỏ tiếng để nghe rõ hiệu ứng cụng ly & "khà"
+  const introVolume = (v: number) => (showIntroRef.current ? Math.min(v, 0.08) : v);
 
   // Hero Video & Original Audio State
   const heroVideoRef = useRef<HTMLVideoElement | null>(null);
@@ -106,7 +109,7 @@ export const App: React.FC = () => {
     const startWithOriginalSound = async () => {
       try {
         video.muted = false;
-        video.volume = volume;
+        video.volume = introVolume(volume);
         await video.play();
         if (!unmounted) {
           setIsMuted(false);
@@ -133,7 +136,7 @@ export const App: React.FC = () => {
       const v = heroVideoRef.current;
       if (!v) return;
       v.muted = false;
-      v.volume = volume;
+      v.volume = introVolume(volume);
       v.play()
         .then(() => {
           setIsMuted(false);
@@ -166,6 +169,21 @@ export const App: React.FC = () => {
       window.removeEventListener('touchstart', unlockAudioOnFirstInteraction);
     };
   }, []);
+
+  // Intro xong: tăng dần âm lượng video về mức bình thường
+  useEffect(() => {
+    if (showIntro) return;
+    showIntroRef.current = false;
+    const v = heroVideoRef.current;
+    if (!v || v.muted) return;
+    let cur = v.volume;
+    const id = window.setInterval(() => {
+      cur = Math.min(volume, cur + 0.06);
+      v.volume = cur;
+      if (cur >= volume) window.clearInterval(id);
+    }, 60);
+    return () => window.clearInterval(id);
+  }, [showIntro]);
 
   const toggleSound = () => {
     const video = heroVideoRef.current;
@@ -305,7 +323,7 @@ export const App: React.FC = () => {
                   }}
                   className="live-dot-hc"
                 />
-                <span>99GS1 Đông Hòa • 17:00 – 23:59</span>
+                <span>99GS1 Đông Hòa</span><span className="header-hours"> • 17:00 – 23:59</span>
               </a>
             </div>
           </div>
@@ -326,7 +344,7 @@ export const App: React.FC = () => {
               DJ & Ưu Đãi
             </a>
             <a href="#mon-dinh" className="nav-link-hc">
-              Món Đinh
+              Món Chính
             </a>
             <a href="#thuc-don" className="nav-link-hc">
               Thực Đơn
@@ -392,7 +410,7 @@ export const App: React.FC = () => {
                 { n: '01', label: 'Trang chủ', sub: 'Video giới thiệu quán', href: '#top' },
                 { n: '02', label: 'Không gian', sub: 'Sân vườn & lối đi đèn neon', href: '#khong-gian' },
                 { n: '03', label: 'DJ & Ưu đãi', sub: '3 món tặng khi đặt bàn trước', href: '#uu-dai' },
-                { n: '04', label: 'Món đinh', sub: '4 món signature của quán', href: '#mon-dinh' },
+                { n: '04', label: 'Món chính', sub: '4 món signature của quán', href: '#mon-dinh' },
                 { n: '05', label: 'Thực đơn', sub: '6 nhóm món • giá niêm yết', href: '#thuc-don' },
                 { n: '06', label: 'Đặt bàn', sub: 'Giữ chỗ & nhận quà tặng', href: '#dat-ban' },
               ].map((item, i) => (
@@ -527,7 +545,7 @@ export const App: React.FC = () => {
           <div
             style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(min(320px, 100%), 1fr))',
               gap: '40px',
               alignItems: 'center',
             }}
@@ -612,46 +630,23 @@ export const App: React.FC = () => {
                 {BRAND_INFO.description}
               </p>
 
-              {/* Điều khiển âm thanh tối giản: icon loa + thanh âm lượng + xem full */}
-              <div className="hero-sound-row">
-                <button
-                  type="button"
-                  onClick={toggleSound}
-                  aria-label={isMuted ? 'Bật tiếng video' : 'Tắt tiếng video'}
-                  title={isMuted ? 'Bật tiếng video' : 'Tắt tiếng video'}
-                  className={`sound-icon-btn sound-icon-btn-lg ${
-                    isMuted ? 'is-muted' : 'is-on'
-                  } ${needsUserGestureForAudio ? 'is-hinting' : ''}`}
-                >
-                  <SoundIcon muted={isMuted} size={22} />
-                </button>
-                <input
-                  type="range"
-                  min="0"
-                  max="1"
-                  step="0.05"
-                  value={isMuted ? 0 : volume}
-                  onChange={handleVolumeChange}
-                  aria-label="Điều chỉnh âm lượng video"
-                  className="volume-slider-hc"
-                  style={
-                    {
-                      '--vol': `${(isMuted ? 0 : volume) * 100}%`,
-                    } as React.CSSProperties
-                  }
-                />
-                <button
-                  type="button"
-                  onClick={() => setIsCinemaModalOpen(true)}
-                  aria-label="Xem full video"
-                  title="Xem full video"
-                  className="sound-icon-btn"
-                >
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                    <path d="M8 5v14l11-7z" />
-                  </svg>
-                </button>
-              </div>
+              {/* Nút chỉ đường tới quán */}
+              <a
+                href={BRAND_INFO.mapsUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="go-to-hello-hc"
+                title="Mở Google Maps chỉ đường tới Hello Central"
+              >
+                <span className="go-to-hello-icon">
+                  <PinIcon size={20} />
+                </span>
+                <span className="go-to-hello-text">
+                  <span className="font-display">Go to Hello</span>
+                  <small>99GS1 Đông Hòa • Chỉ đường Google Maps</small>
+                </span>
+                <span className="go-to-hello-arrow" aria-hidden="true">↗</span>
+              </a>
 
               {/* Primary CTA Buttons */}
               <div
@@ -806,6 +801,7 @@ export const App: React.FC = () => {
                   >
                     <span className="sticker-badge">DZÔ!!! RIGHT WAY</span>
                     <span
+                      className="hide-mobile-hc"
                       style={{
                         padding: '6px 12px',
                         borderRadius: '999px',
@@ -1130,7 +1126,7 @@ export const App: React.FC = () => {
           <div
             style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(min(320px, 100%), 1fr))',
               gap: '32px',
               alignItems: 'center',
               padding: '28px',
@@ -1323,7 +1319,7 @@ export const App: React.FC = () => {
       </section>
 
       {/* ====================================================================
-          SECTION 4: TOP 4 MÓN ĐINH SIGNATURE (F&B Art Posters + 3D Tilt)
+          SECTION 4: TOP 4 MÓN CHÍNH SIGNATURE (F&B Art Posters + 3D Tilt)
           ==================================================================== */}
       <section
         id="mon-dinh"
@@ -1653,7 +1649,7 @@ export const App: React.FC = () => {
                               fontWeight: 800,
                             }}
                           >
-                            ⭐ ĐINH
+                            ⭐ BÁN CHẠY
                           </span>
                         )}
                         {item.spicy && <span title="Món cay">🌶️</span>}
@@ -1703,7 +1699,7 @@ export const App: React.FC = () => {
           <div
             style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(min(320px, 100%), 1fr))',
               gap: '36px',
               padding: '36px 28px',
               borderRadius: '32px',

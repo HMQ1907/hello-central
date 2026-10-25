@@ -1806,3 +1806,192 @@ a.menu-info-row:hover { color: var(--amber-gold); }
 
 @property --x-angle { syntax: '<angle>'; initial-value: 4.5deg; inherits: true; }
 @property --x-shift { syntax: '<percentage>'; initial-value: 0%; inherits: true; }
+
+/* ==========================================================================
+   SỬA GIAO DIỆN ĐIỆN THOẠI
+   ========================================================================== */
+.floating-header-pill > div:first-child { min-width: 0; }
+.floating-header-pill > div:first-child > div { min-width: 0; }
+
+@media (max-width: 600px) {
+  .floating-header-wrap { top: 10px; padding: 0 10px; }
+  .floating-header-pill { gap: 8px; }
+  .floating-header-pill img { width: 38px !important; height: 38px !important; }
+  .floating-header-pill .font-display { font-size: 0.86rem !important; }
+  .floating-header-pill .sound-icon-btn,
+  .floating-header-pill > div:last-child > button { width: 38px !important; height: 38px !important; }
+  .floating-header-pill > div:last-child { gap: 6px !important; flex-shrink: 0; }
+  .header-hours { display: none; }
+  .hide-mobile-hc { display: none !important; }
+
+  /* Khung lớn: giảm padding để không tràn chữ */
+  .banner-showcase-hc,
+  #dat-ban .glow-border-hc { padding: 20px 16px !important; gap: 24px !important; border-radius: 24px !important; }
+  .art-menu-paper { padding: 24px 14px !important; }
+  #dat-ban form { padding: 18px 14px !important; }
+
+  /* Ô số liệu ở hero */
+  .stat-card-hc { padding: 12px 10px !important; }
+  .stat-card-hc .font-display { font-size: 0.95rem !important; }
+  .stat-card-hc > div:last-child { font-size: 0.7rem !important; }
+
+  /* Nút: cho phép xuống dòng, full chiều ngang */
+  .btn-hello-primary, .btn-hello-secondary { white-space: normal; text-align: center; }
+  footer .btn-hello-primary, footer .btn-hello-secondary,
+  #dat-ban .btn-hello-primary, #dat-ban .btn-hello-secondary,
+  #uu-dai .banner-showcase-hc .btn-hello-primary,
+  #uu-dai .banner-showcase-hc .btn-hello-secondary { width: 100%; }
+  #top .btn-hello-primary, #top .btn-hello-secondary { width: 100%; }
+
+  /* Nút Zalo / Gọi nổi: nhỏ gọn hơn, ít che nội dung */
+  .quick-contact-dock { right: 12px; bottom: 14px; gap: 10px; }
+  .quick-contact-btn { width: 46px; height: 46px; }
+  .quick-contact-btn span { font-size: 0.7rem !important; }
+  .quick-contact-phone span { font-size: 1.1rem !important; }
+
+  .grid-signature-4 > * { margin-top: 0 !important; }
+  section { padding-top: 64px !important; padding-bottom: 64px !important; }
+  section#top { padding-top: 96px !important; }
+}
+
+/* Nút âm thanh trên thanh menu: dịch sang trái cho cân với khoảng trống */
+@media (min-width: 1024px) {
+  .floating-header-pill > div:last-child > .sound-icon-btn {
+    margin-right: 28px;
+  }
+}
+
+/* Nút "Go to Hello" – chỉ đường Google Maps ở hero */
+.go-to-hello-hc {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  padding: 8px 20px 8px 8px;
+  margin-bottom: 28px;
+  border-radius: 999px;
+  background: rgba(20, 13, 9, 0.72);
+  border: 1px solid rgba(255, 184, 0, 0.35);
+  backdrop-filter: blur(12px);
+  color: var(--text-cream);
+  text-decoration: none;
+  transition: border-color 0.25s ease, background 0.25s ease, translate 0.25s var(--ease-out-soft);
+}
+.go-to-hello-hc:hover {
+  border-color: #ffb800;
+  background: rgba(255, 184, 0, 0.12);
+  translate: 0 -2px;
+}
+.go-to-hello-icon {
+  position: relative;
+  width: 46px;
+  height: 46px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  background: linear-gradient(135deg, #ff451e, #ff1e27);
+  box-shadow: 0 6px 18px rgba(255, 69, 30, 0.5);
+  flex-shrink: 0;
+}
+.go-to-hello-icon svg { animation: pin-bounce 1.8s ease-in-out infinite; }
+.go-to-hello-icon::after {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: 999px;
+  border: 2px solid rgba(255, 69, 30, 0.7);
+  animation: contact-ring 2.2s var(--ease-out-soft) infinite;
+}
+@keyframes pin-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+.go-to-hello-text { display: flex; flex-direction: column; line-height: 1.25; }
+.go-to-hello-text .font-display { font-size: 0.98rem; font-weight: 800; color: #ffb800; letter-spacing: 0.02em; }
+.go-to-hello-text small { font-size: 0.74rem; color: var(--text-muted); }
+.go-to-hello-arrow { font-size: 1.1rem; color: #ffb800; margin-left: 4px; transition: transform 0.25s ease; }
+.go-to-hello-hc:hover .go-to-hello-arrow { transform: translate(3px, -3px); }
+
+/* Màn "Chạm để DZÔ" khi trình duyệt chặn âm thanh tự phát */
+.intro-cheers.is-gate, .intro-cheers.is-probe { cursor: default; }
+.intro-gate {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 24px;
+  text-align: center;
+  animation: menu-fade 0.5s ease both;
+}
+.intro-gate-mugs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 18px;
+}
+.intro-gate-mugs svg {
+  width: clamp(90px, 15vmin, 130px);
+  height: auto;
+  filter: drop-shadow(0 16px 26px rgba(0, 0, 0, 0.6));
+  animation: gate-wobble 1.6s ease-in-out infinite;
+}
+.intro-gate-mugs svg:first-child { transform: scaleX(-1) rotate(-8deg); animation-name: gate-wobble-l; }
+.intro-gate-mugs svg:last-child { transform: rotate(-8deg); }
+@keyframes gate-wobble-l {
+  0%, 100% { transform: scaleX(-1) rotate(-8deg); }
+  50% { transform: scaleX(-1) rotate(4deg) translateY(-6px); }
+}
+@keyframes gate-wobble {
+  0%, 100% { transform: rotate(-8deg); }
+  50% { transform: rotate(4deg) translateY(-6px); }
+}
+.intro-gate-title {
+  font-size: clamp(1.8rem, 6vmin, 3.2rem);
+  font-weight: 900;
+  color: #fbf3e4;
+  line-height: 1.1;
+}
+.intro-gate-sub {
+  color: #ffb800;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  margin-bottom: 18px;
+}
+.intro-gate-btn {
+  position: relative;
+  padding: 18px 36px;
+  border-radius: 999px;
+  border: 3px solid #110b08;
+  background: linear-gradient(135deg, #ffd54a, #ffb800 55%, #ff8a00);
+  color: #110b08;
+  font-size: clamp(1rem, 3vmin, 1.25rem);
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  box-shadow: 6px 6px 0 #ff451e, 0 0 40px rgba(255, 184, 0, 0.55);
+  animation: gate-pulse 1.4s ease-in-out infinite;
+  transition: transform 0.2s ease;
+}
+.intro-gate-btn::after {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border-radius: 999px;
+  border: 2px solid rgba(255, 184, 0, 0.7);
+  animation: contact-ring 1.8s var(--ease-out-soft) infinite;
+  pointer-events: none;
+}
+.intro-gate-btn:active { transform: scale(0.95); }
+@keyframes gate-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.06); }
+}
+.intro-gate-hint {
+  margin-top: 14px;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
